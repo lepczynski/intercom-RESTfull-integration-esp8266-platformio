@@ -14,3 +14,9 @@ A tiny RESTfull API for opening an old intercom that has to emulate reciever pic
 -add platformio code  
 -add dockerization or sth other aiming for the average computer-user friendliness level  
 -post photos of the intercom circuit and case  
+
+#Details:
+
+- $MCU_IP_ADDRESS/open  
+- $MCU_IP_ADDRESS/health  
+- $MCU_IP_ADDRESS/delay_ms?t=500  
