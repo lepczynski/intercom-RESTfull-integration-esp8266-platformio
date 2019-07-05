@@ -19,7 +19,8 @@ A tiny RESTfull API for opening an old intercom that has to emulate reciever pic
 
 # REST End-points:
 
-- GET: /open  > get method for easier cli integration ```bash curl 192.168.1.101```
+- GET: /open  > get method for easier cli integration ```bash
+curl 192.168.1.101```
 - GET: /health  
 - PUT: /delay_ms?t=500  
 - PUT: /pulse_length_ms?t=500  
@@ -30,7 +31,4 @@ A tiny RESTfull API for opening an old intercom that has to emulate reciever pic
 
 # MarkDown playground:
 ```python
-def m(x):
-  print(x)
-m('Hello!')
-```
+  print(x)```
