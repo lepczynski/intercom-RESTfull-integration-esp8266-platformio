@@ -7,8 +7,8 @@ from time import sleep
 import gc
 gc.collect()
 
-ssid = 'nazwa_sieci_wifi'
-password = 'haslo_do_wifi'
+ssid = 'nbrmc'
+password = 'x98Xf82FbegihGumbbZS'
 
 station = network.WLAN(network.STA_IF)
 
