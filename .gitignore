@@ -8,3 +8,6 @@
 .gcc-flags.json
 
 # End of https://www.gitignore.io/api/platformio
+
+# my personal properites files, wifi credentials etc.
+*lepi*
