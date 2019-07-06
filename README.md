@@ -4,7 +4,7 @@ A tiny RESTfull API for opening an old intercom that has to emulate reciever pic
 
 # Already found-out:
 
--intercom has a all-time 9V supply lines  
+-intercom has all-time on 9V supply lines  
 -[SSR relay datasheet](https://omronfs.omron.com/en_US/ecb/products/pdf/en-g3mc.pdf) (I got the and they're small - if I'll need I'll swap that for a mechanical one, the goal is so that it is small enough to put it into the oryginal intercom case
 
 # ToDo:
