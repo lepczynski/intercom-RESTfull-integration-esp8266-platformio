@@ -32,3 +32,8 @@ A tiny RESTfull API for opening an old intercom that has to emulate reciever pic
 ```Python
 print(x)
 ```
+
+# BOM:
+- resistors: 2x min.500ohm (optimal to try 1-10kohm)  (12mA per pin on Wemos)  
+- 2x relay RZ2 G4,5 ITT West Germany  
+- micro-usb power supply  
