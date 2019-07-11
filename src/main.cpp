@@ -79,7 +79,7 @@ void setup(){
     serializeJson(config['hostname'], hostname);
 
     int wifiMaxConnectionTrials = 20;
-    serializeJson(config['wifiMaxConnectionTrials'], &wifiMaxConnectionTrials);
+    serializeJson(config['wifiMaxConnectionTrials'], wifiMaxConnectionTrials);
 
     propertiesFile.close();
     SPIFFS.end();
