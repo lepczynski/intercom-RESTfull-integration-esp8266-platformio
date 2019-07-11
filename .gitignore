@@ -9,6 +9,6 @@
 
 # End of https://www.gitignore.io/api/platformio
 
-# my personal properites files, wifi credentials etc.
+# personal properites files, wifi credentials etc.
 *lepi*
-./data/properties.json
+data/
