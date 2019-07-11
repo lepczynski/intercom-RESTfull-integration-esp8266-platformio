@@ -1,57 +1,174 @@
 #include "FS.h"
 
-#define STA_SSID "SSID"
-#define STA_passphrase "passphrase"
+#define PIN_PHONE_OUT 2 // D4
+#define PIN_PHONE_IN 0 // D3
+#define PIN_DOOR_OUT 4 // D2
+
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+ESP8266WebServer server;
+
+// #define ARDUINOJSON_ENABLE_ARDUINO_STRING 1
+#include <ArduinoJson.h>
+
+void(*reset)( void ) = 0; // reboot function
+
+void openDoor();
+void health();
+
+StaticJsonDocument<500> CONFIG;
 
 void setup(){
-	Serial.begin(115200);
+    Serial.begin(115200);
+    Serial.print("Serial on @ 115200");
 
-	// SPIFFSConfig cfg;
-	// cfg.setAutoFormat(false);
-	// SPIFFS.setConfig(cfg);
+    // Serial.println("Turning off SPIFFS autoformat...");
+    // SPIFFSConfig cfg;
+    // cfg.setAutoFormat(false);
+    // SPIFFS.setConfig(cfg);
 
-	SPIFFS.begin();
+    Serial.println("Mounting SPIFFS file system...");
+    SPIFFS.begin();
+
+    Serial.println("Opening properties.json file...");
+    File propertiesFile = SPIFFS.open("/properties.json", "r");
+
+    if (!propertiesFile) {
+        Serial.println("file opening failed!");
+    } else {
+        size_t propertiesSize = propertiesFile.size();
+        Serial.print("Property file size: ");
+        Serial.println(propertiesSize);
+
+        // arduinojson5 ?
+        // std::unique_ptr<char[]> buf(new char[propertiesSize]);
+
+        // Serial.println("Reading the file into a buffer");
+        // propertiesFile.readBytes(buf.get(), propertiesSize);
+        // Serial.println("Buffer read.");
+        // Serial.println(buf.get());
+
+        // Attempt deserializing json
+        auto error = deserializeJson( CONFIG, propertiesFile );
+        if( error ) {
+            Serial.print("ERROR: Failed to parse properties: ");
+            Serial.println( error.c_str() );
+            // toDo: wire up some defaults
+            Serial.println("FATAL ERROR: No config! :<\nHere be dragons !");
+        }
+
+    }
+
+    char ssid[32] = "";
+    serializeJson(CONFIG['SSID'], ssid);
+    Serial.print("as<String>: ");
+    Serial.println(ssid.c_str());
+    Serial.println();
+    Serial.println();
 
 
-	File file = SPIFFS.open("/properties.txt", "r");
-	if (!file) {
-    	Serial.println("file open failed");
-	} else {
-		String data = file.readStringUntil('#');
-		Serial.println("/properties.txt:");
-		Serial.println(data);
-		Serial.println("====end of file====");
-		Serial.print("File size is: ");
-		Serial.println(file.size());
-	}
+    char passphrase[64] = ""; //CONFIG['passphrase'];
+    serializeJson(CONFIG['passphrase'], passphrase);
 
-	Serial.println("====== Writing to SPIFFS file =========");
-	// write 10 strings to file
-	File f=SPIFFS.open("log.txt", "a");
-	for (int i=1; i<=3; i++) {
-		f.print("Millis() : ");
-		f.println(millis());
-	}
-	f.close();
-	f=SPIFFS.open("log.txt", "r");
-	if (!f) {
-    	Serial.println("log file open failed !");
-	} else {
-		String data = f.readStringUntil('#');
-		Serial.println("/log.txt:");
-		Serial.println(data);
-		Serial.println("====end of file====");
-		Serial.print("File size is: ");
-		Serial.println(f.size());
-	}
-	f.close();
+    char hostname[64] = ""; // CONFIG['hostname'];
+    serializeJson(CONFIG['hostname'], hostname);
+
+    propertiesFile.close();
+    SPIFFS.end();
+
+    Serial.println("WiFi setting Station mode...");
+    WiFi.mode(WIFI_STA);
+    
+    Serial.print("WiFi hostname: ");
+    Serial.println(hostname);
+    WiFi.hostname(hostname);
+    
+    Serial.print("WiFi SSID: ");
+    Serial.println(ssid);
+    
+    Serial.print(" WiFi pass: ");
+    // Serial.println(CONFIG['passphrase'].as<String>());
+    Serial.println(passphrase);
+    
+    Serial.print("Connecting");
+    // WiFi.config(ip, dns, gateway, subnet_mask);
+    WiFi.begin( ssid, passphrase);
+
+    while(WiFi.status()!=WL_CONNECTED){
+        Serial.print(".");
+        delay(333);
+    }
+
+    Serial.println();
+    Serial.println("V0.04");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.localIP());
 
 
-	file.close();
-	SPIFFS.end();
+
+    pinMode(PIN_DOOR_OUT, OUTPUT);
+
+    pinMode(PIN_PHONE_IN, INPUT_PULLUP); // INPUT_PULLDOWN);
+    pinMode(PIN_PHONE_OUT, OUTPUT);
+
+    server.on("/o", openDoor);
+    server.on("/h", health);
+    server.begin();
+
+    digitalWrite(PIN_DOOR_OUT, false);
+    digitalWrite(PIN_PHONE_OUT, false);
 
 }
 
+
 void loop(){
-	return;
+
+    server.handleClient();
+
+    if(Serial.available()) {
+        char incoming = Serial.read();
+        // Serial.print("[");
+        // Serial.print(incoming);
+        // Serial.print("]");
+        if(incoming=='o') {
+            openDoor();
+        } else if(incoming=='h') {
+            health();
+        }
+    }
+
+}
+
+void health(){
+        Serial.println();
+        Serial.println("Health ok!");
+        server.send(200, "text/plain", "Health ok!\n");
+}
+
+void openDoor(){
+    bool phone = digitalRead(PIN_PHONE_IN);
+
+    if(phone) {
+        Serial.println("Picking up the phone...");
+        digitalWrite(PIN_PHONE_OUT, true);
+        delay(500);
+
+        Serial.println("Opening the gate for 2,5s...");
+        digitalWrite(PIN_DOOR_OUT, true);
+        delay(2500);
+
+        Serial.println("Closing the gate...");
+        digitalWrite(PIN_DOOR_OUT, false);
+
+        Serial.println("Hangin' up....");
+        digitalWrite(PIN_PHONE_OUT, false);
+
+
+        server.send(200, "text/plain", "Gate successfully opened!\n");
+
+
+    } else {
+        Serial.println("The phone is up, ABORTING !");
+        server.send(409, "text/plain", "The phone is up, ABORTING !\n");
+    }
 }
