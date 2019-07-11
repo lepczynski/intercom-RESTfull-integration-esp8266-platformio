@@ -6,9 +6,13 @@ A tiny RESTfull API for opening an old intercom that has to emulate reciever pic
 ## NECESSARY:
 - ~~make a fritzing schematic~~  
 - ~~find out the current going through the phycisal gate circuit when opening the gate~~  
-- ~~post photos of the intercom circuit~~ 
-- <span style="color:orange">json config load (arduinoJson6)</span>  
+- ~~post photos of the intercom circuit~~  
+  
+- **json config load (arduinoJson6)**  
+  - try the official example way with a struct Config ?  
+  - find Guy with the Swedish Accent's approach with ArduinoJson5 and see how to pin the lib in platformio.ini  
 - if that doesn't work - fallback to either arduinoJson5 or line parsing a text file  
+  
 - create a user at my http server for OTA
 - OTA  
 ## AFTER 1st working version:
