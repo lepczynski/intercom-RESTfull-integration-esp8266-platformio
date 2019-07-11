@@ -2,38 +2,36 @@
 A tiny RESTfull API for opening an old intercom that has to emulate reciever pick-up and after setupable delay closing the physical gate circuit.
 
 
-# Already found-out:
-
--intercom has all-time on 9V supply lines  
--[SSR relay datasheet](https://omronfs.omron.com/en_US/ecb/products/pdf/en-g3mc.pdf) (I got the and they're small - if I'll need I'll swap that for a mechanical one, the goal is so that it is small enough to put it into the oryginal intercom case
-
 # ToDo:
+## NECESSARY:
+-~~make a fritzing schematic~~  
+-~~find out the current going through the phycisal gate circuit when opening the gate~~  
+-~~post photos of the intercom circuit~~ 
+-json config load (arduinoJson6)  
+-if that doesn't work - fallback to either arduinoJson5 or line parsing a text file  
+-create a user at my http server for OTA
+-OTA  
 
--make a fritzing schematic  
--find out the current going through the phycisal gate circuit when opening the gate  
--add platformio code  
--add dockerization or sth other aiming for the average computer-user friendliness level  
--post photos of the intercom circuit and case  
+## AFTER 1st working version:  
+-HTTPS letsenrypt → for PUT on /config
 -multi WiFi credentials  
--HTTPS letsenrypt → Wemos ?  
+-GitLab CI/CD integration (Docker)  
+-Authentication for sensitive endpoints (or all? - configurable)
+
 
 # REST End-points:
-
-- GET: /open  > get method for easier cli integration like so: ```curl 192.168.1.101/open```
-- GET: /health  
+- GET: /open or /o  > get method for easier cli integration like so: ```curl 192.168.1.101/open```  
+- GET: /health  or /h  
 - PUT: /delay_ms?t=500  
 - PUT: /pulse_length_ms?t=500  
-- GET: /restart
-- PUT: /OTA/address?a="http://lepi.pl/OTA/RPLUS-intercom"
-- GET: /OTA/reload > check for updates at address
+- GET: /restart  
+- PUT: /OTA/address?a="http://lepi.pl/OTA/RPLUS-intercom"  
+- GET: /OTA/reload > check for updates at address  
+- GET: /config → json with config but only https and with AUTHENTICATION
 
-
-# MarkDown playground:
-```Python
-print(x)
-```
 
 # BOM:
 - resistors: 2x 1kohm [min.500ohm (over 1kohm doesn't close the relay)  (12mA per pin on Wemos)]  
-- 2x relay RZ2 G4,5 ITT West Germany  
+- transistors: 2x CTBC 547B JS (I hope they're not running JavaScript xD)  
+- 2x relay RZ2 G4,5 ITT West Germany  (>29 yrs old)  
 - micro-usb power supply  
