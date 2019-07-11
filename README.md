@@ -4,21 +4,21 @@ A tiny RESTfull API for opening an old intercom that has to emulate reciever pic
 
 # ToDo:
 ## NECESSARY:
--~~make a fritzing schematic~~  
--~~find out the current going through the phycisal gate circuit when opening the gate~~  
--~~post photos of the intercom circuit~~ 
--json config load (arduinoJson6)  
--if that doesn't work - fallback to either arduinoJson5 or line parsing a text file  
--create a user at my http server for OTA
--OTA  
+- ~~make a fritzing schematic~~  
+- ~~find out the current going through the phycisal gate circuit when opening the gate~~  
+- ~~post photos of the intercom circuit~~ 
+- json config load (arduinoJson6)  
+- if that doesn't work - fallback to either arduinoJson5 or line parsing a text file  
+- create a user at my http server for OTA
+- OTA  
+## AFTER 1st working version:
+- HTTPS letsenrypt → for PUT on /config
+- multi WiFi credentials  
+- GitLab CI/CD integration (Docker)  
+- Authentication for sensitive endpoints (or all? - configurable)
 
-## AFTER 1st working version:  
--HTTPS letsenrypt → for PUT on /config
--multi WiFi credentials  
--GitLab CI/CD integration (Docker)  
--Authentication for sensitive endpoints (or all? - configurable)
-
-
+  
+  
 # REST End-points:
 - GET: /open or /o  > get method for easier cli integration like so: ```curl 192.168.1.101/open```  
 - GET: /health  or /h  
