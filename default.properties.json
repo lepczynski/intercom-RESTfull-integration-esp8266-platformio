@@ -1,10 +1,10 @@
 {
-  "title": "properties.json from https://github.com/lepczynski/intercom-RESTfull-integration-esp8266-platformio.git",
+  "hostname": "intercom",
   "SSID": "SSID",
   "passphrase": "passphrase",
-  "delay_ms":	"500",
-  "pulse_length": "2500",
-  "OTA": {
-  	"addreses": "http://lepi.pl"
-  }
+  "wifiMaxConnectionTrials" : 20,
+  "delayMs":	500,
+  "pulseLength": 2500,
+  "OTAVersionAddreses": "http://somewhere.net/intercom/firmware/version",
+  "OTAFirmwareAddreses": "http://somewhere.net/intercom/firmware"
 }
