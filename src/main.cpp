@@ -16,7 +16,9 @@ void(*reset)( void ) = 0; // reboot function
 void openDoor();
 void health();
 
-StaticJsonDocument<500> CONFIG;
+StaticJsonDocument<600> CONFIG;
+
+bool offlineMode = false;
 
 void setup(){
     Serial.begin(115200);
@@ -49,7 +51,7 @@ void setup(){
         // Serial.println(buf.get());
 
         // Attempt deserializing json
-        auto error = deserializeJson( CONFIG, propertiesFile );
+        DeserializationError error = deserializeJson( CONFIG, propertiesFile );
         if( error ) {
             Serial.print("ERROR: Failed to parse properties: ");
             Serial.println( error.c_str() );
@@ -73,8 +75,13 @@ void setup(){
     char hostname[64] = ""; // CONFIG['hostname'];
     serializeJson(CONFIG['hostname'], hostname);
 
+    int wifiMaxConnectionTrials = 20;
+    serializeJson(CONFIG['wifiMaxConnectionTrials'], &wifiMaxConnectionTrials);
+
     propertiesFile.close();
     SPIFFS.end();
+
+    // Connect
 
     Serial.println("WiFi setting Station mode...");
     WiFi.mode(WIFI_STA);
@@ -94,9 +101,18 @@ void setup(){
     // WiFi.config(ip, dns, gateway, subnet_mask);
     WiFi.begin( ssid, passphrase);
 
-    while(WiFi.status()!=WL_CONNECTED){
+    int connectionTrials = 0;
+
+    while(WiFi.status()!=WL_CONNECTED && connectionTrials < wifiMaxConnectionTrials){
         Serial.print(".");
+        connectionTrials++;
         delay(333);
+    }
+
+    if(WiFi.status()!=WL_CONNECTED) {
+        Serial.print("Failed connecting to WiFi, entering offline mode");
+
+        // toDo: implement offline mode
     }
 
     Serial.println();
@@ -123,7 +139,18 @@ void setup(){
 
 void loop(){
 
-    server.handleClient();
+    phoneUp = digitalRead(PIN_PHONE_IN);
+
+    if(!offlineMode) {
+        server.handleClient();
+    }
+
+    
+    if(phoneUp) {  // If the phone is picked up - close the circuit
+        digitalWrite(PIN_PHONE_OUT, true);
+    } else {
+        digitalWrite(PIN_PHONE_OUT, false);
+    }
 
     if(Serial.available()) {
         char incoming = Serial.read();
