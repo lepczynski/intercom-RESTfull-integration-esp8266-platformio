@@ -7,7 +7,7 @@ A tiny RESTfull API for opening an old intercom that has to emulate reciever pic
 - ~~make a fritzing schematic~~  
 - ~~find out the current going through the phycisal gate circuit when opening the gate~~  
 - ~~post photos of the intercom circuit~~ 
-- json config load (arduinoJson6)  
+- <span style="color:orange">json config load (arduinoJson6)</span>  
 - if that doesn't work - fallback to either arduinoJson5 or line parsing a text file  
 - create a user at my http server for OTA
 - OTA  
