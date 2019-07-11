@@ -16,9 +16,10 @@ void(*reset)( void ) = 0; // reboot function
 void openDoor();
 void health();
 
-StaticJsonDocument<600> CONFIG;
+StaticJsonDocument<600> config;
 
 bool offlineMode = false;
+bool phoneUp = false;
 
 void setup(){
     Serial.begin(115200);
@@ -51,7 +52,7 @@ void setup(){
         // Serial.println(buf.get());
 
         // Attempt deserializing json
-        DeserializationError error = deserializeJson( CONFIG, propertiesFile );
+        DeserializationError error = deserializeJson( config, propertiesFile );
         if( error ) {
             Serial.print("ERROR: Failed to parse properties: ");
             Serial.println( error.c_str() );
@@ -61,22 +62,24 @@ void setup(){
 
     }
 
-    char ssid[32] = "";
-    serializeJson(CONFIG['SSID'], ssid);
-    Serial.print("as<String>: ");
-    Serial.println(ssid.c_str());
+    // char ssid[32] = "";
+    // serializeJson(config['SSID'], ssid);
+    auto ssid = config["SSID"].as<char*>();
+    
+    Serial.print("auto .as<char*> ssid: ");
+    Serial.println(ssid);
     Serial.println();
     Serial.println();
 
 
-    char passphrase[64] = ""; //CONFIG['passphrase'];
-    serializeJson(CONFIG['passphrase'], passphrase);
+    char passphrase[64] = ""; //config['passphrase'];
+    serializeJson(config['passphrase'], passphrase);
 
-    char hostname[64] = ""; // CONFIG['hostname'];
-    serializeJson(CONFIG['hostname'], hostname);
+    char hostname[64] = ""; // config['hostname'];
+    serializeJson(config['hostname'], hostname);
 
     int wifiMaxConnectionTrials = 20;
-    serializeJson(CONFIG['wifiMaxConnectionTrials'], &wifiMaxConnectionTrials);
+    serializeJson(config['wifiMaxConnectionTrials'], &wifiMaxConnectionTrials);
 
     propertiesFile.close();
     SPIFFS.end();
@@ -94,7 +97,7 @@ void setup(){
     Serial.println(ssid);
     
     Serial.print(" WiFi pass: ");
-    // Serial.println(CONFIG['passphrase'].as<String>());
+    // Serial.println(config['passphrase'].as<String>());
     Serial.println(passphrase);
     
     Serial.print("Connecting");
