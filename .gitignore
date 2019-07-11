@@ -11,4 +11,4 @@
 
 # my personal properites files, wifi credentials etc.
 *lepi*
-/data/properties.json
+data/properties.json
