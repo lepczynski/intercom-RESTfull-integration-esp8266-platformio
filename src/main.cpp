@@ -62,29 +62,29 @@ void setup(){
 
     }
 
-    // char ssid[32] = "";
-    // serializeJson(config['SSID'], ssid);
+//          DO DIS  \/        
     auto ssid = config["SSID"].as<char*>();
-    
-    Serial.print("auto .as<char*> ssid: ");
-    Serial.println(ssid);
-    Serial.println();
-    Serial.println();
+    auto passphrase = config["passphrase"].as<char*>();
+    auto hostname = config["hostname"].as<char*>();
 
 
-    char passphrase[64] = ""; //config['passphrase'];
-    serializeJson(config['passphrase'], passphrase);
 
-    char hostname[64] = ""; // config['hostname'];
-    serializeJson(config['hostname'], hostname);
 
-    int wifiMaxConnectionTrials = 20;
-    serializeJson(config['wifiMaxConnectionTrials'], wifiMaxConnectionTrials);
+    // char passphrase[64] = ""; //config['passphrase'];
+    // serializeJson(config['passphrase'], passphrase);
+
+    // char hostname[64] = ""; // config['hostname'];
+    // serializeJson(config['hostname'], hostname);
+
+    int wifiMaxConnectionTrials = config["wifiMaxConnectionTrials"].as<int>() | 30;
+    Serial.print("Setting wifiMaxConnectionTrials to: ");
+    Serial.println(wifiMaxConnectionTrials);
 
     propertiesFile.close();
     SPIFFS.end();
 
-    // Connect
+
+    // Connect to WiFi:
 
     Serial.println("WiFi setting Station mode...");
     WiFi.mode(WIFI_STA);
